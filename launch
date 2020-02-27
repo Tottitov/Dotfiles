@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+
+# Terminate already running bar instances
+killall -q polybar
+
+for m in $(polybar --list-monitors | cut -d":" -f1); do
+	MONITOR=$m polybar -c ~/.config/polybar/config.ini default > /dev/null 2>&1 --reload &
+done
+
+echo "Polybar launched..."

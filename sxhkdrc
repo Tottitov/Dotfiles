@@ -1,0 +1,143 @@
+# BSPWM BINDINGS
+# quit/restart bspwm
+super + alt + {q,r}
+	{prompt 'Leave Xorg?' 'bspc quit',bspc wm -r}
+# close and kill
+super + {_,shift + }q
+	bspc node -{c,k}
+# hide polybar
+super + b
+	polybar-msg cmd hide && bspc config top_padding 0
+super + shift + b
+	polybar-msg cmd show && bspc config top_padding 24
+# Rotate nodes
+super + shift + space
+	bspc node @/ -R 90
+# set the window state
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+# focus the node in the given direction
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+# focus the next/previous desktop in the current monitor
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+# focus or send to the given desktop
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+# expand a window by moving one of its side outward
+super + alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+# contract a window by moving one of its side inward
+super + alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+# move a floating window
+super + ctrl + {h,j,k,l}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+# APPLICATION BINDINGS
+super + {_,shift + }Return
+	{$TERMINAL,samedir}
+super + d
+	dmenu_run
+super + {_,shift + }r
+	$TERMINAL -e {$FILE,upgrade}
+super + e
+	$TERMINAL -e neomutt && polybar-msg hook mailbox 1
+super + m
+	$TERMINAL -e ncmpcpp
+super + n
+	$TERMINAL -e newsboat
+super + v
+	$TERMINAL -e nvim -c VimwikiIndex
+super + {_,shift + }a
+	{dmenucalc,$TERMINAL -e alsamixer}
+super + c
+	$TERMINAL -e calcurse -D ~/.config/calcurse
+super + shift + c
+	mpv --no-osc --no-input-default-bindings --input-conf=/dev/null --title='mpvfloat' /dev/video0
+super + shift + e
+	tutorialvids
+super + i
+	$TERMINAL -e htop
+super + g
+	gimp
+super + {_,shift + }w
+	{$BROWSER,$TERMINAL -e nmtui}
+
+# FN KEY BINDINGS
+super + grave
+	dmenuunicode
+super + Insert
+	showclip
+super + shift + x
+	prompt "Shutdown computer?" "sudo -A shutdown -h now"
+super + shift + BackSpace
+	prompt "Reboot computer?" "sudo -A reboot"
+super + x
+	slock ; mpc pause ; pauseallmpv
+{XF86MonBrightnessDown,XF86MonBrightnessUp}
+	xbacklight {-dec 10,-inc 10}
+XF86Tools
+	$TERMINAL -e $EDITOR ~/.config/sxhkd/sxhkdrc
+XF86Search
+	$BROWSER https://google.com
+XF86LaunchA
+	$TERMINAL -e transmission-remote-cli
+XF86Explorer
+	simple-scan
+XF86Display
+	displayselect
+super + ctrl + 0
+	displayselect
+# Audiokeys
+XF86AudioMicMute
+	amixer sset Capture toggle
+XF86AudioMute
+	amixer sset Master toggle
+XF86Audio{Raise,Lower}Volume
+	amixer sset Master 5%{+,-}
+
+# RECORD BINDINGS
+# Take screenshot
+Print
+	maim pic-full-$(date '+%y%m%d-%H%M-%S').png
+# Pick screenshot type
+shift + Print
+	maimpick
+# Print: Record audio or video; Del: kill recording
+super + Print
+	dmenurecord
+super + Delete
+	dmenurecord kill
+# Pause audio
+super + alt + p
+	mpc stop
+super + p
+	mpc toggle
+super + shift + p
+	mpc pause; pauseallmpv
+# Changes to next/previous tracks
+super + {comma,period}
+	mpc {prev,next}
+# Restart track
+super + shift + less
+	mpc seek 0%
+# Seek foward in song
+super + {_,shift +} bracketright
+	mpc seek +{10,120}
+# Seek backward in song
+super + {_,shift +} bracketleft
+	mpc seek -{10,120}
+# Increase volume
+super {_,shift +} + equal
+	amixer sset Master {5,15}%+
+# Decrease volume
+super {_,shift +} + minus
+	amixer sset Master {5,15}%-
+super + shift + m
+	amixer sset Master toggle
+
+# Function keys
+super + {F9,F10}
+	{dmenumount,dmenuumount}
