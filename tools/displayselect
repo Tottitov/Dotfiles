@@ -1,0 +1,29 @@
+#!/bin/sh
+
+# A UI for detecting and selecting all displays. Probes autorandr for connected
+# displays and lets user select one to use, this takes advantage of the postswitch
+# allowing polybar to work well with workspace transitions
+
+# Checks if External Monitors are available
+if [[ $(xrandr -q | grep " connected" | wc -l) -gt 1 ]]; then
+	# Get all connected screens.
+	screens=$(xrandr -q | grep " connected" | awk '{print $1}')
+	# Get user's choice:
+	chosen=$(printf "%s\\nDual-Monitors\\nManual Selection" "$screens" | dmenu -i -p "Select Display:")
+	case "$chosen" in
+		"Manual Selection") arandr; exit ;;
+		"Dual-Monitors") autorandr dual ;;
+		"eDP-1") autorandr mobile ;;
+		"DP-2-1") autorandr docked ;;
+		"VGA-1") autorandr vga ;;
+		"HDMI-1") autorandr hdmi ;;
+		*) exit ;;
+	esac
+	# Fix background if screen size/arangement has changed.
+	setbg
+else
+	notify-send "Screenchange" "External display not connected"
+fi
+
+setbg #Fix background is arragenment has changed
+pgrep -x dunst >/dev/null && killall dunst && setsid dunst & # Reset Dunst

@@ -1,0 +1,12 @@
+#!/bin/sh
+
+answer=$(echo "$@" | bc -l | sed '/\./ s/\.\{0,1\}0\{1,\}$//')
+menu="$(command -v dmenu)"
+action=$(echo -e "Clear\nCopy" | $menu -p "= $answer")
+
+case $action in
+    "Clear") $0 ;;
+    "Copy") echo -n "$answer" | xclip -selection c ;;
+    "") exit ;;
+    *) $0 "$answer $action" ;;
+esac

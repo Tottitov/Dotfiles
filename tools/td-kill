@@ -1,0 +1,4 @@
+#!/bin/sh
+
+[ "$(printf "No\\nYes" | dmenu -i -p "Kill transmission-daemon?")" = "Yes" ] && transmission-remote --exit
+notify-send "transmission-daemon killed."
