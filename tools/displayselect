@@ -4,6 +4,10 @@
 # displays and lets user select one to use, this takes advantage of the postswitch
 # allowing polybar to work well with workspace transitions
 
+singlescreen() {
+	xrandr --output "$1" --auto --scale 1.0x1.0 $(echo "$allposs" | grep -v "$1" | awk '{print "--output", $1, "--off"}' | paste -sd ' ')
+}
+
 # Checks if External Monitors are available
 if [[ $(xrandr -q | grep " connected" | wc -l) -gt 1 ]]; then
 	# Get all connected screens.
@@ -15,15 +19,9 @@ if [[ $(xrandr -q | grep " connected" | wc -l) -gt 1 ]]; then
 		"Dual-Monitors") autorandr dual ;;
 		"eDP-1") autorandr mobile ;;
 		"DP-2-1") autorandr docked ;;
-		"VGA-1") autorandr vga ;;
-		"HDMI-1") autorandr hdmi ;;
-		*) exit ;;
+		*) singlescreen() "$chosen"
 	esac
-	# Fix background if screen size/arangement has changed.
-	setbg
-else
-	notify-send "Screenchange" "External display not connected"
 fi
 
 setbg #Fix background is arragenment has changed
-pgrep -x dunst >/dev/null && killall dunst && setsid dunst & # Reset Dunst
+{ killall dunst ; setsid -f dunst ;} >/dev/null 2>&1 # Reset Dunst
